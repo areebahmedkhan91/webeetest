@@ -92,7 +92,11 @@ export class EventsService {
      */
 
   async getEventsWithWorkshops() {
-    throw new Error('TODO task 1');
+    // throw new Error('TODO task 1');
+    return await this.eventRepository.query("Select event.id AS id, event.name as name, event.createdAt as createdAs, JSON_ARRAY(w.id, w.name, w.eventId, w.createdAt, w.start, w.end) as WorkShop from event, workshop AS w JOIN workshop ON w.eventId=event.id").then((result) => {
+      console.log((result));
+    });
+
   }
 
   /* TODO: complete getFutureEventWithWorkshops so that it returns events with workshops, that have not yet started
@@ -162,6 +166,10 @@ export class EventsService {
     ```
      */
   async getFutureEventWithWorkshops() {
-    throw new Error('TODO task 2');
+    // throw new Error('TODO task 2');
+    //Select event.id AS id, event.name as name, event.createdAt as createdAs, JSON_ARRAY(w.id, w.name, w.eventId, w.createdAt, w.start, w.end) as WorkShop from event, workshop AS w JOIN workshop ON w.eventId=event.id WHERE JULIANDAY('now') - JULIANDAY(w.start)
+    this.eventRepository.query("Select event.id AS id, event.name as name, event.createdAt as createdAs, JSON_ARRAY(w.id, w.name, w.eventId, w.createdAt, w.start, w.end) as WorkShop from event, workshop AS w JOIN workshop ON w.eventId=event.id WHERE JULIANDAY('now') - JULIANDAY(w.start)").then(result => {
+      console.log(result);
+    });
   }
 }

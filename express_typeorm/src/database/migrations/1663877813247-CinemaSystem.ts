@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { MigrationInterface, QueryRunner, Table, TableForeignKey } from 'typeorm';
 
 export class CinemaSystem1663877813247 implements MigrationInterface {
   /**
@@ -31,7 +31,101 @@ export class CinemaSystem1663877813247 implements MigrationInterface {
    * As a cinema owner I dont want to configure the seating for every show
    */
   public async up(queryRunner: QueryRunner): Promise<void> {
-    throw new Error('TODO: implement migration in task 4');
+    // throw new Error('TODO: implement migration in task 4');
+    // user table
+    await queryRunner.createTable(
+      new Table({
+        name: 'user',
+        columns: [
+          {
+            name: 'id',
+            isPrimary: true,
+            type: 'integer',
+            isGenerated: true,
+            generationStrategy: 'increment',
+          },
+          { name: 'name', type: 'varchar' },
+          {
+            name: 'createdAt',
+            type: 'timestamp',
+            default: 'CURRENT_TIMESTAMP',
+          },
+        ],
+      }),
+    );
+
+    // cinema
+    await queryRunner.createTable(
+      new Table({
+        name: 'cinema',
+        columns: [
+          {
+            name: 'id',
+            isPrimary: true,
+            type: 'integer',
+            isGenerated: true,
+            generationStrategy: 'increment',
+          },
+          { name: 'price', type: 'varchar' },
+          { name: 'seatId', type: 'integer' },
+          { name: 'percentage_premium', type: 'integer' },
+          { name: 'movieTime', type: 'date' },
+
+          {
+            name: 'createdAt',
+            type: 'timestamp',
+            default: 'CURRENT_TIMESTAMP',
+          },
+        ],
+      }),
+    );
+    
+
+    // seating
+    await queryRunner.createTable(
+      new Table({
+        name: 'seats',
+        columns: [
+          {
+            name: 'id',
+            isPrimary: true,
+            type: 'integer',
+            isGenerated: true,
+            generationStrategy: 'increment',
+          },
+          { name: 'userId', type: 'integer' },
+          { name: 'seatType', type: 'varchar' },
+          { name: 'available', type: 'varchar' },
+          { name: 'movieTime', type: 'date' },
+
+          {
+            name: 'createdAt',
+            type: 'timestamp',
+            default: 'CURRENT_TIMESTAMP',
+          },
+        ],
+      }),
+    );
+
+    await queryRunner.createForeignKey(
+      'seats',
+      new TableForeignKey({
+        columnNames: ['userId'],
+        referencedColumnNames: ['id'],
+        referencedTableName: 'user',
+        onDelete: 'CASCADE',
+      }),
+    );
+
+    await queryRunner.createForeignKey(
+      'cinema',
+      new TableForeignKey({
+        columnNames: ['seatId'],
+        referencedColumnNames: ['id'],
+        referencedTableName: 'seats',
+        onDelete: 'CASCADE',
+      }),
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {}
